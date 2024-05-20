@@ -14,6 +14,7 @@ import static java.math.BigDecimal.valueOf;
 import static java.math.RoundingMode.HALF_UP;
 
 public class OrderCreationUseCase {
+
     private final OrderRepository orderRepository;
     private final ProductCatalog productCatalog;
 
