@@ -32,6 +32,10 @@ public class Order {
         return order;
     }
 
+    public void markShipped() {
+        setStatus(SHIPPED);
+    }
+
     public void validateBeforeShipping() {
         if (getStatus().equals(CREATED) || getStatus().equals(REJECTED)) {
             throw new OrderCannotBeShippedException();
