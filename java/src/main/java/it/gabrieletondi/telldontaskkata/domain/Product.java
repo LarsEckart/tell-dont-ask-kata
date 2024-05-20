@@ -19,11 +19,11 @@ public class Product {
             .setScale(2, HALF_UP);
     }
 
-  public BigDecimal calculateUnitaryTaxedAmount(BigDecimal unitaryTax) {
+  private BigDecimal calculateUnitaryTaxedAmount(BigDecimal unitaryTax) {
         return getPrice().add(unitaryTax).setScale(2, HALF_UP);
     }
 
-  public BigDecimal calculateUnitaryTax() {
+  private BigDecimal calculateUnitaryTax() {
         return getPrice().divide(valueOf(100))
             .multiply(getCategory().getTaxPercentage()).setScale(2, HALF_UP);
     }
