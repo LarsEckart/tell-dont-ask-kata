@@ -1,7 +1,13 @@
 package it.gabrieletondi.telldontaskkata.domain;
 
+import static it.gabrieletondi.telldontaskkata.domain.OrderStatus.CREATED;
+import static it.gabrieletondi.telldontaskkata.domain.OrderStatus.REJECTED;
+import static it.gabrieletondi.telldontaskkata.domain.OrderStatus.SHIPPED;
+
 import it.gabrieletondi.telldontaskkata.useCase.ApprovedOrderCannotBeRejectedException;
 import it.gabrieletondi.telldontaskkata.useCase.OrderApprovalRequest;
+import it.gabrieletondi.telldontaskkata.useCase.OrderCannotBeShippedException;
+import it.gabrieletondi.telldontaskkata.useCase.OrderCannotBeShippedTwiceException;
 import it.gabrieletondi.telldontaskkata.useCase.RejectedOrderCannotBeApprovedException;
 import it.gabrieletondi.telldontaskkata.useCase.ShippedOrdersCannotBeChangedException;
 import java.math.BigDecimal;
@@ -24,6 +30,16 @@ public class Order {
         order.setTotal(new BigDecimal("0.00"));
         order.setTax(new BigDecimal("0.00"));
         return order;
+    }
+
+    public void validateBeforeShipping() {
+        if (getStatus().equals(CREATED) || getStatus().equals(REJECTED)) {
+            throw new OrderCannotBeShippedException();
+        }
+
+        if (getStatus().equals(SHIPPED)) {
+            throw new OrderCannotBeShippedTwiceException();
+        }
     }
 
     public void approve(OrderApprovalRequest request) {
