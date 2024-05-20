@@ -5,7 +5,6 @@ import it.gabrieletondi.telldontaskkata.domain.OrderItem;
 import it.gabrieletondi.telldontaskkata.domain.Product;
 import it.gabrieletondi.telldontaskkata.repository.OrderRepository;
 import it.gabrieletondi.telldontaskkata.repository.ProductCatalog;
-import java.math.BigDecimal;
 
 public class OrderCreationUseCase {
 
@@ -26,15 +25,13 @@ public class OrderCreationUseCase {
       if (product == null) {
         throw new UnknownProductException();
       } else {
-        final BigDecimal taxedAmount = product.calculateTaxedAmount(itemRequest.getQuantity());
-        final BigDecimal taxAmount = product.calculateTaxAmount(itemRequest.getQuantity());
+        Taxes taxes = product.calculateTaxesTaxes(itemRequest);
 
-        final OrderItem orderItem = OrderItem.create(itemRequest,
-            product, taxAmount, taxedAmount);
+        final OrderItem orderItem = OrderItem.create(itemRequest, product, taxes);
         order.getItems().add(orderItem);
 
-        order.setTotal(order.getTotal().add(taxedAmount));
-        order.setTax(order.getTax().add(taxAmount));
+        order.setTotal(order.getTotal().add(taxes.taxedAmount()));
+        order.setTax(order.getTax().add(taxes.taxAmount()));
       }
     }
 

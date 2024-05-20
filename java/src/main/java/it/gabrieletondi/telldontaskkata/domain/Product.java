@@ -3,6 +3,8 @@ package it.gabrieletondi.telldontaskkata.domain;
 import static java.math.BigDecimal.valueOf;
 import static java.math.RoundingMode.HALF_UP;
 
+import it.gabrieletondi.telldontaskkata.useCase.SellItemRequest;
+import it.gabrieletondi.telldontaskkata.useCase.Taxes;
 import java.math.BigDecimal;
 
 public class Product {
@@ -10,11 +12,17 @@ public class Product {
     private BigDecimal price;
     private Category category;
 
-  public BigDecimal calculateTaxAmount(int quantity) {
+  public Taxes calculateTaxesTaxes(SellItemRequest itemRequest) {
+    final BigDecimal taxedAmount = calculateTaxedAmount(itemRequest.getQuantity());
+    final BigDecimal taxAmount = calculateTaxAmount(itemRequest.getQuantity());
+    return new Taxes(taxedAmount, taxAmount);
+  }
+
+  private BigDecimal calculateTaxAmount(int quantity) {
       return calculateUnitaryTax().multiply(valueOf(quantity));
     }
 
-  public BigDecimal calculateTaxedAmount(int quantity) {
+  private BigDecimal calculateTaxedAmount(int quantity) {
         return calculateUnitaryTaxedAmount(calculateUnitaryTax()).multiply(BigDecimal.valueOf(quantity))
             .setScale(2, HALF_UP);
     }
