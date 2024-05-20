@@ -10,6 +10,11 @@ public class Product {
     private BigDecimal price;
     private Category category;
 
+  public BigDecimal calculateTaxedAmount(int quantity) {
+        return calculateUnitaryTaxedAmount(calculateUnitaryTax()).multiply(BigDecimal.valueOf(quantity))
+            .setScale(2, HALF_UP);
+    }
+
   public BigDecimal calculateUnitaryTaxedAmount(BigDecimal unitaryTax) {
         return getPrice().add(unitaryTax).setScale(2, HALF_UP);
     }
