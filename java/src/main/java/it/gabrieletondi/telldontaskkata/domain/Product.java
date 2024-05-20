@@ -1,5 +1,8 @@
 package it.gabrieletondi.telldontaskkata.domain;
 
+import static java.math.BigDecimal.valueOf;
+import static java.math.RoundingMode.HALF_UP;
+
 import java.math.BigDecimal;
 
 public class Product {
@@ -7,7 +10,16 @@ public class Product {
     private BigDecimal price;
     private Category category;
 
-    public String getName() {
+  public BigDecimal calculateUnitaryTaxedAmount(BigDecimal unitaryTax) {
+        return getPrice().add(unitaryTax).setScale(2, HALF_UP);
+    }
+
+  public BigDecimal calculateUnitaryTax() {
+        return getPrice().divide(valueOf(100))
+            .multiply(getCategory().getTaxPercentage()).setScale(2, HALF_UP);
+    }
+
+  public String getName() {
         return name;
     }
 
