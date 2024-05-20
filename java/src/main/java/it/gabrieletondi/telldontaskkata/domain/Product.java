@@ -28,12 +28,12 @@ public class Product {
     }
 
   private BigDecimal calculateUnitaryTaxedAmount(BigDecimal unitaryTax) {
-        return getPrice().add(unitaryTax).setScale(2, HALF_UP);
+    return price.add(unitaryTax).setScale(2, HALF_UP);
     }
 
   private BigDecimal calculateUnitaryTax() {
-        return getPrice().divide(valueOf(100))
-            .multiply(getCategory().getTaxPercentage()).setScale(2, HALF_UP);
+    return price.divide(valueOf(100))
+            .multiply(category.getTaxPercentage()).setScale(2, HALF_UP);
     }
 
   public String getName() {
@@ -52,11 +52,7 @@ public class Product {
         this.price = price;
     }
 
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
+  public void setCategory(Category category) {
         this.category = category;
     }
 }
