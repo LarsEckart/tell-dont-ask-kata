@@ -26,10 +26,8 @@ public class OrderCreationUseCase {
       if (product == null) {
         throw new UnknownProductException();
       } else {
-        final BigDecimal unitaryTax = product.calculateUnitaryTax();
         final BigDecimal taxedAmount = product.calculateTaxedAmount(itemRequest.getQuantity());
-        final BigDecimal taxAmount = unitaryTax.multiply(
-            BigDecimal.valueOf(itemRequest.getQuantity()));
+        final BigDecimal taxAmount = product.calculateTaxAmount(itemRequest.getQuantity());
 
         final OrderItem orderItem = new OrderItem();
         orderItem.setProduct(product);
