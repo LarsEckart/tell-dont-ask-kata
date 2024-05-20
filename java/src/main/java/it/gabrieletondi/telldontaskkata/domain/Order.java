@@ -10,103 +10,112 @@ import it.gabrieletondi.telldontaskkata.useCase.OrderCannotBeShippedException;
 import it.gabrieletondi.telldontaskkata.useCase.OrderCannotBeShippedTwiceException;
 import it.gabrieletondi.telldontaskkata.useCase.RejectedOrderCannotBeApprovedException;
 import it.gabrieletondi.telldontaskkata.useCase.ShippedOrdersCannotBeChangedException;
+import it.gabrieletondi.telldontaskkata.useCase.Taxes;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
-    private BigDecimal total;
-    private String currency;
-    private List<OrderItem> items;
-    private BigDecimal tax;
-    private OrderStatus status;
-    private int id;
 
-    public static Order createNewOrder() {
-        Order order = new Order();
-        order.setStatus(OrderStatus.CREATED);
-        order.setItems(new ArrayList<>());
-        order.setCurrency("EUR");
-        order.setTotal(new BigDecimal("0.00"));
-        order.setTax(new BigDecimal("0.00"));
-        return order;
+  private BigDecimal total;
+  private String currency;
+  private List<OrderItem> items;
+  private BigDecimal tax;
+  private OrderStatus status;
+  private int id;
+
+  public static Order createNewOrder() {
+    Order order = new Order();
+    order.setStatus(OrderStatus.CREATED);
+    order.setItems(new ArrayList<>());
+    order.setCurrency("EUR");
+    order.setTotal(new BigDecimal("0.00"));
+    order.setTax(new BigDecimal("0.00"));
+    return order;
+  }
+
+  public void addItem(OrderItem orderItem, Taxes taxes) {
+    this.items.add(orderItem);
+
+    this.total = getTotal().add(taxes.taxedAmount());
+    this.tax = getTax().add(taxes.taxAmount());
+  }
+
+  public void markShipped() {
+    setStatus(SHIPPED);
+  }
+
+  public void validateBeforeShipping() {
+    if (getStatus().equals(CREATED) || getStatus().equals(REJECTED)) {
+      throw new OrderCannotBeShippedException();
     }
 
-    public void markShipped() {
-        setStatus(SHIPPED);
+    if (getStatus().equals(SHIPPED)) {
+      throw new OrderCannotBeShippedTwiceException();
+    }
+  }
+
+  public void approve(OrderApprovalRequest request) {
+    if (getStatus().equals(OrderStatus.SHIPPED)) {
+      throw new ShippedOrdersCannotBeChangedException();
     }
 
-    public void validateBeforeShipping() {
-        if (getStatus().equals(CREATED) || getStatus().equals(REJECTED)) {
-            throw new OrderCannotBeShippedException();
-        }
-
-        if (getStatus().equals(SHIPPED)) {
-            throw new OrderCannotBeShippedTwiceException();
-        }
+    if (request.isApproved() && getStatus().equals(OrderStatus.REJECTED)) {
+      throw new RejectedOrderCannotBeApprovedException();
     }
 
-    public void approve(OrderApprovalRequest request) {
-        if (getStatus().equals(OrderStatus.SHIPPED)) {
-            throw new ShippedOrdersCannotBeChangedException();
-        }
-
-        if (request.isApproved() && getStatus().equals(OrderStatus.REJECTED)) {
-            throw new RejectedOrderCannotBeApprovedException();
-        }
-
-        if (!request.isApproved() && getStatus().equals(OrderStatus.APPROVED)) {
-            throw new ApprovedOrderCannotBeRejectedException();
-        }
-
-        setStatus(request.isApproved() ? OrderStatus.APPROVED : OrderStatus.REJECTED);
+    if (!request.isApproved() && getStatus().equals(OrderStatus.APPROVED)) {
+      throw new ApprovedOrderCannotBeRejectedException();
     }
 
-    public BigDecimal getTotal() {
-        return total;
-    }
+    setStatus(request.isApproved() ? OrderStatus.APPROVED : OrderStatus.REJECTED);
+  }
 
-    public void setTotal(BigDecimal total) {
-        this.total = total;
-    }
+  public BigDecimal getTotal() {
+    return total;
+  }
 
-    public String getCurrency() {
-        return currency;
-    }
+  public void setTotal(BigDecimal total) {
+    this.total = total;
+  }
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
+  public String getCurrency() {
+    return currency;
+  }
 
-    public List<OrderItem> getItems() {
-        return items;
-    }
+  public void setCurrency(String currency) {
+    this.currency = currency;
+  }
 
-    public void setItems(List<OrderItem> items) {
-        this.items = items;
-    }
+  public List<OrderItem> getItems() {
+    return items;
+  }
 
-    public BigDecimal getTax() {
-        return tax;
-    }
+  public void setItems(List<OrderItem> items) {
+    this.items = items;
+  }
 
-    public void setTax(BigDecimal tax) {
-        this.tax = tax;
-    }
+  public BigDecimal getTax() {
+    return tax;
+  }
 
-    public OrderStatus getStatus() {
-        return status;
-    }
+  public void setTax(BigDecimal tax) {
+    this.tax = tax;
+  }
 
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
+  public OrderStatus getStatus() {
+    return status;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public void setStatus(OrderStatus status) {
+    this.status = status;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
 }

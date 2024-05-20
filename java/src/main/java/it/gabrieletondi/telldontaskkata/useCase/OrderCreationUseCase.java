@@ -25,13 +25,10 @@ public class OrderCreationUseCase {
       if (product == null) {
         throw new UnknownProductException();
       } else {
-        Taxes taxes = product.calculateTaxesTaxes(itemRequest);
+        Taxes taxes = product.calculateTaxes(itemRequest);
 
-        final OrderItem orderItem = OrderItem.create(itemRequest, product, taxes);
-        order.getItems().add(orderItem);
-
-        order.setTotal(order.getTotal().add(taxes.taxedAmount()));
-        order.setTax(order.getTax().add(taxes.taxAmount()));
+        final OrderItem orderItem = OrderItem.create(product, taxes, itemRequest.getQuantity());
+        order.addItem(orderItem, taxes);
       }
     }
 

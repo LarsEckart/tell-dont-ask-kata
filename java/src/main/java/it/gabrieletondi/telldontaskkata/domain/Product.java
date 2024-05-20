@@ -12,7 +12,7 @@ public class Product {
     private BigDecimal price;
     private Category category;
 
-  public Taxes calculateTaxesTaxes(SellItemRequest itemRequest) {
+  public Taxes calculateTaxes(SellItemRequest itemRequest) {
     final BigDecimal taxedAmount = calculateTaxedAmount(itemRequest.getQuantity());
     final BigDecimal taxAmount = calculateTaxAmount(itemRequest.getQuantity());
     return new Taxes(taxedAmount, taxAmount);
