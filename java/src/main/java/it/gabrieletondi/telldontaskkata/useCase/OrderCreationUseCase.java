@@ -25,7 +25,7 @@ public class OrderCreationUseCase {
       if (product == null) {
         throw new UnknownProductException();
       } else {
-        Taxes taxes = product.calculateTaxes(itemRequest);
+        Taxes taxes = product.calculateTaxes(itemRequest.getQuantity());
 
         final OrderItem orderItem = OrderItem.create(product, taxes, itemRequest.getQuantity());
         order.addItem(orderItem, taxes);
